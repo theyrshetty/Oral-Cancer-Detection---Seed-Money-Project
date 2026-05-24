@@ -1,0 +1,580 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../theme.dart';
+import '../widgets/nav_bar.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = Bp.isMobile(context);
+
+    return Scaffold(
+      appBar: const OralGuardNavBar(),
+      bottomNavigationBar: isMobile ? const OralGuardBottomNav() : null,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _HeroSection(),
+            _FeaturesSection(),
+            _HowItWorksSection(),
+            _Footer(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── HERO ─────────────────────────────────────────────────────────────────────
+
+class _HeroSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final isWide = Bp.isWide(context);
+    final hPad = Bp.isMobile(context) ? 16.0 : 24.0;
+
+    return Container(
+      color: AppColors.dark,
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: hPad, vertical: isWide ? 56 : 36),
+      child: isWide
+          ? Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: _HeroText()),
+                const SizedBox(width: 48),
+                Expanded(child: _HeroCards()),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _HeroText(),
+                const SizedBox(height: 28),
+                _HeroCards(),
+              ],
+            ),
+    );
+  }
+}
+
+class _HeroText extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final fs = fontScale(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.rustMid.withOpacity(0.4)),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            '● ORAL CANCER SCREENING PLATFORM',
+            style: GoogleFonts.sourceSans3(
+              fontSize: 9 * fs,
+              letterSpacing: 2.5,
+              color: AppColors.rustMid,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: 'Detect early.\n',
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 34 * fs,
+                  color: const Color(0xFFF0ECE6),
+                  height: 1.15,
+                ),
+              ),
+              TextSpan(
+                text: 'Act sooner.\n',
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 34 * fs,
+                  color: AppColors.rustMid,
+                  fontStyle: FontStyle.italic,
+                  height: 1.15,
+                ),
+              ),
+              TextSpan(
+                text: 'Survive.',
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 34 * fs,
+                  color: const Color(0xFFF0ECE6),
+                  height: 1.15,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Oral cancer is highly treatable when caught early. Use our tools to check your risk, review your symptoms, and compare lesion images against clinical cases.',
+          style: GoogleFonts.sourceSans3(
+            fontSize: 14 * fs,
+            color: const Color(0xFFA09890),
+            height: 1.8,
+          ),
+        ),
+        const SizedBox(height: 24),
+        Row(
+          children: [
+            _StatItem(number: '84%', label: '5-yr survival\nat Stage I'),
+            const SizedBox(width: 36),
+            _StatItem(number: '20%', label: '5-yr survival\nat Stage IV'),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _StatItem extends StatelessWidget {
+  final String number;
+  final String label;
+  const _StatItem({required this.number, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    final fs = fontScale(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(number,
+            style: GoogleFonts.playfairDisplay(fontSize: 26 * fs, color: AppColors.rustMid)),
+        Text(label,
+            style: GoogleFonts.sourceSans3(
+                fontSize: 11 * fs, color: const Color(0xFF706860), height: 1.5)),
+      ],
+    );
+  }
+}
+
+class _HeroCards extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _HeroCard(
+          icon: '🔍',
+          iconBg: AppColors.rust.withOpacity(0.2),
+          title: 'Self-Exam Guide',
+          desc: 'Check your own mouth in 5 minutes',
+          onTap: () => context.go('/self-exam'),
+        ),
+        const SizedBox(height: 10),
+        _HeroCard(
+          icon: '📋',
+          iconBg: AppColors.sage.withOpacity(0.2),
+          title: 'Risk Screener',
+          desc: '18 questions — get a personalised risk result',
+          onTap: () => context.go('/screener'),
+        ),
+        const SizedBox(height: 10),
+        _HeroCard(
+          icon: '📷',
+          iconBg: AppColors.rust.withOpacity(0.2),
+          title: 'Image Matcher',
+          desc: 'Compare a lesion photo to our clinical database',
+          onTap: () => context.go('/matcher'),
+        ),
+      ],
+    );
+  }
+}
+
+class _HeroCard extends StatefulWidget {
+  final String icon;
+  final Color iconBg;
+  final String title;
+  final String desc;
+  final VoidCallback onTap;
+
+  const _HeroCard({
+    required this.icon,
+    required this.iconBg,
+    required this.title,
+    required this.desc,
+    required this.onTap,
+  });
+
+  @override
+  State<_HeroCard> createState() => _HeroCardState();
+}
+
+class _HeroCardState extends State<_HeroCard> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_)  => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(14),
+          transform: Matrix4.translationValues(_hovered ? 4 : 0, 0, 0),
+          decoration: BoxDecoration(
+            color: _hovered
+                ? Colors.white.withOpacity(0.10)
+                : Colors.white.withOpacity(0.06),
+            border: Border.all(
+              color: _hovered
+                  ? AppColors.rust.withOpacity(0.5)
+                  : Colors.white.withOpacity(0.10),
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: widget.iconBg,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                    child: Text(widget.icon, style: const TextStyle(fontSize: 19))),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(widget.title,
+                        style: GoogleFonts.sourceSans3(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFFF0ECE6))),
+                    const SizedBox(height: 2),
+                    Text(widget.desc,
+                        style: GoogleFonts.sourceSans3(
+                            fontSize: 12, color: const Color(0xFF706860))),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward,
+                color: _hovered ? AppColors.rustMid : const Color(0xFF706860),
+                size: 18,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── FEATURES ─────────────────────────────────────────────────────────────────
+
+class _FeaturesSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final isWide = Bp.isWide(context);
+    final hPad = Bp.isMobile(context) ? 16.0 : 24.0;
+
+    final cards = [
+      _FeatureData(
+        badge: 'START HERE',
+        title: 'Self-Exam Guide',
+        desc: 'A step-by-step visual guide to checking your own mouth at home. Know what to look for — lips, tongue, cheeks, floor of mouth, and throat.',
+        btnLabel: 'Open Guide →',
+        onTap: () => context.go('/self-exam'),
+      ),
+      _FeatureData(
+        badge: 'RISK ASSESSMENT',
+        title: 'Risk Screener',
+        desc: 'A clinical questionnaire covering tobacco, alcohol, HPV, and 9 key symptoms. Intelligent follow-up questions help differentiate oral cancer from benign conditions.',
+        btnLabel: 'Start Screener →',
+        onTap: () => context.go('/screener'),
+      ),
+      _FeatureData(
+        badge: 'VISUAL COMPARISON',
+        title: 'Image Matcher',
+        desc: 'Upload a photo of an oral lesion. AI finds the most visually similar benign and malignant cases from our indexed clinical image database.',
+        btnLabel: 'Open Matcher →',
+        onTap: () => context.go('/matcher'),
+      ),
+      _FeatureData(
+        badge: 'ALWAYS REMEMBER',
+        title: 'See a Clinician',
+        desc: 'These tools help you become aware — they do not diagnose. Any persistent or unexplained change lasting over 3 weeks should be evaluated by a dentist or specialist.',
+        btnLabel: null,
+        onTap: null,
+        badgeColor: AppColors.sage,
+      ),
+    ];
+
+    return Padding(
+      padding: EdgeInsets.all(hPad),
+      child: isWide
+          ? GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 1.4,
+              physics: const NeverScrollableScrollPhysics(),
+              children: cards.map((d) => _FeatureCard(data: d)).toList(),
+            )
+          : Column(
+              children: cards
+                  .map((d) => Padding(
+                        padding: const EdgeInsets.only(bottom: 14),
+                        child: _FeatureCard(data: d),
+                      ))
+                  .toList(),
+            ),
+    );
+  }
+}
+
+class _FeatureData {
+  final String badge;
+  final String title;
+  final String desc;
+  final String? btnLabel;
+  final VoidCallback? onTap;
+  final Color badgeColor;
+
+  const _FeatureData({
+    required this.badge,
+    required this.title,
+    required this.desc,
+    required this.btnLabel,
+    required this.onTap,
+    this.badgeColor = AppColors.rust,
+  });
+}
+
+class _FeatureCard extends StatefulWidget {
+  final _FeatureData data;
+  const _FeatureCard({required this.data});
+
+  @override
+  State<_FeatureCard> createState() => _FeatureCardState();
+}
+
+class _FeatureCardState extends State<_FeatureCard> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = Bp.isMobile(context);
+    final fs = fontScale(context);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_)  => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.data.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: EdgeInsets.all(isMobile ? 20 : 28),
+          transform: Matrix4.translationValues(0, _hovered ? -2 : 0, 0),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            border: Border.all(
+              color: _hovered ? AppColors.rust : AppColors.border,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: _hovered
+                ? [
+                    BoxShadow(
+                        color: AppColors.rust.withOpacity(0.10),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8))
+                  ]
+                : [],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.data.badge,
+                style: GoogleFonts.sourceSans3(
+                  fontSize: 9 * fs,
+                  letterSpacing: 2.5,
+                  color: widget.data.badgeColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(widget.data.title,
+                  style: GoogleFonts.playfairDisplay(fontSize: 20 * fs)),
+              const SizedBox(height: 8),
+              Text(
+                widget.data.desc,
+                style: GoogleFonts.sourceSans3(
+                    fontSize: 13 * fs, color: AppColors.muted, height: 1.75),
+              ),
+              if (widget.data.btnLabel != null) ...[
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: widget.data.onTap,
+                  child: Text(widget.data.btnLabel!.toUpperCase()),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── HOW IT WORKS ─────────────────────────────────────────────────────────────
+
+class _HowItWorksSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final steps = [
+      ('01', 'Learn to self-examine',
+          'Follow the illustrated guide to inspect your mouth systematically.'),
+      ('02', 'Answer the screener',
+          'Our questionnaire weighs risk factors and symptoms to assess urgency.'),
+      ('03', 'Match a lesion photo',
+          'Upload an image and our AI finds the most visually similar cases.'),
+      ('04', 'See a clinician',
+          "These tools inform — they don't diagnose. Always consult a dentist or specialist."),
+    ];
+
+    final isWide = Bp.isWide(context);
+    final isMobile = Bp.isMobile(context);
+    final hPad = isMobile ? 20.0 : 40.0;
+    final fs = fontScale(context);
+
+    return Container(
+      color: const Color(0xFFFDFAF7),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: hPad, vertical: 36),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('HOW IT WORKS',
+              style: GoogleFonts.sourceSans3(
+                  fontSize: 9 * fs,
+                  letterSpacing: 3.5,
+                  color: AppColors.rust,
+                  fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          Text('Three tools, one platform',
+              style: GoogleFonts.playfairDisplay(fontSize: 24 * fs)),
+          const SizedBox(height: 24),
+          isWide
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: steps
+                      .map((s) => Expanded(
+                          child: _StepTile(num: s.$1, title: s.$2, desc: s.$3)))
+                      .toList(),
+                )
+              : GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  crossAxisSpacing: 14,
+                  mainAxisSpacing: 14,
+                  childAspectRatio: isMobile ? 1.0 : 1.15,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: steps
+                      .map((s) => _StepTile(num: s.$1, title: s.$2, desc: s.$3))
+                      .toList(),
+                ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StepTile extends StatelessWidget {
+  final String num;
+  final String title;
+  final String desc;
+  const _StepTile({required this.num, required this.title, required this.desc});
+
+  @override
+  Widget build(BuildContext context) {
+    final fs = fontScale(context);
+    return Padding(
+      padding: const EdgeInsets.only(right: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(num,
+              style: GoogleFonts.playfairDisplay(
+                  fontSize: 40 * fs, color: AppColors.rustLight)),
+          const SizedBox(height: 6),
+          Text(title,
+              style: GoogleFonts.sourceSans3(
+                  fontSize: 13 * fs, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          Text(desc,
+              style: GoogleFonts.sourceSans3(
+                  fontSize: 12 * fs, color: AppColors.muted, height: 1.65)),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── FOOTER ───────────────────────────────────────────────────────────────────
+
+class _Footer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final hPad = Bp.isMobile(context) ? 20.0 : 40.0;
+
+    return Container(
+      color: AppColors.dark,
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: hPad, vertical: 32),
+      child: Column(
+        children: [
+          RichText(
+            text: TextSpan(children: [
+              TextSpan(
+                  text: 'Oral',
+                  style: GoogleFonts.playfairDisplay(
+                      fontSize: 18, color: const Color(0xFFA09890))),
+              TextSpan(
+                  text: 'Guard',
+                  style: GoogleFonts.playfairDisplay(
+                      fontSize: 18, color: AppColors.rustMid)),
+            ]),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'A research and educational screening platform. Not a substitute for professional clinical evaluation.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.sourceSans3(
+                fontSize: 13, color: const Color(0xFF706860), height: 1.7),
+          ),
+          const SizedBox(height: 18),
+          const Divider(color: Color(0xFF2A2520)),
+          const SizedBox(height: 8),
+          Text(
+            '⚠ This tool does not provide medical diagnoses. Always consult a qualified dentist, oral surgeon, or oncologist.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.sourceSans3(
+                fontSize: 12, color: const Color(0xFF4A4440)),
+          ),
+        ],
+      ),
+    );
+  }
+}
