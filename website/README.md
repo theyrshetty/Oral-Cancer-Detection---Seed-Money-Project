@@ -79,31 +79,3 @@ All dependencies are loaded from CDN — no `npm install` needed.
 | Playfair Display + Source Sans 3 | Google Fonts | All pages |
 | Anthropic Claude API | `api.anthropic.com` | `matcher.html` |
 
----
-
-## Clinical Context
-
-Early detection dramatically improves outcomes:
-
-| Stage at Detection | Approximate 5-year Survival |
-|---|---|
-| Stage I | ~84% |
-| Stage IV | ~20% |
-
-The anatomy reference image (`oral_anatomy.png`) illustrates the eight key inspection zones (A–H) used in the self-exam guide: gingiva & mucosa, lips, buccal mucosa & posterior gingivae, vestibule & anterior gingivae, hard palate, soft palate & tonsillar area, tongue surfaces, and the floor of the mouth.
-
----
-
-## Contributing
-
-Pull requests are welcome. When contributing, please:
-1. Maintain the existing CSS variable design system for visual consistency.
-2. Keep all tools self-contained in a single HTML file (HTML + CSS + JS together).
-3. Do not remove or weaken the medical disclaimer language.
-4. Test across Chrome, Firefox, and Safari before submitting.
-
----
-
-## License
-
-MIT — free to use, adapt, and redistribute for educational and research purposes. Not for deployment as a clinical decision support tool without appropriate regulatory review.
